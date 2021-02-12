@@ -1,75 +1,106 @@
-(function () {
-    var users = [
-        {username: 'test1', firstname: 'first1', lastname: 'last1', role: 'Student'},
-        {username: 'test2', firstname: 'first2', lastname: 'last2', role: 'Student'},
-        {username: 'test3', firstname: 'first3', lastname: 'last3', role: 'Student'},
-        {username: 'test4', firstname: 'first4', lastname: 'last4', role: 'Student'},
-        {username: 'test5', firstname: 'first5', lastname: 'last5', role: 'Student'},
-        {username: 'test6', firstname: 'first6', lastname: 'last6', role: 'Faculty'},
-        {username: 'test7', firstname: 'first7', lastname: 'last7', role: 'Faculty'},
-        {username: 'test8', firstname: 'first8', lastname: 'last8', role: 'Admin'}
-    ];
+    var users = [];
     var $usernameFld, $passwordFld;
     var $firstNameFld, $lastNameFld, $roleFld;
-    var $removeBtn = jQuery(#wbdv-remove), $editBtn = jQuery(#wbdv-edit), $createBtn = jQuery(#wbdv-create);
-    var $userRowTemplate, $tbody = jQuery("tbody");
+    var $removeBtn, $editBtn, $createBtn;
+    var $userRowTemplate, $tbody;
     var userService = new AdminUserServiceClient();
-    $(main);
+    var selectedUser = null
 
-    function main() {
-        $createBtn.click(createUser)
-        $removeBtn.click(deleteUser)
-        renderUsers(users)
-    }
-    function createUser(event) {
-        var create = jQuery(event.target)
-        $usernameFld = create.attr("usernameFld")
-        $firstNameFld = create.attr("firstNameFld")
-        $lastNameFld = create.attr("lastNameFld")
-        $roleFld = create.attr("roleFld")
-        $tbody.append(`
-                <tr>
-                    <td>$usernameFld</td>
-                    <td>$firstNameFld</td>
-                    <td>$lastNameFld</td>
-                    <td>$roleFld</td>
-                    <td class="wbdv-actions">
-                        <span class="pull-right">
-                            <i class="fa-2x fa fa-times wbdv-remove"></i>
-                            <i class="fa-2x fa fa-pencil wbdv-edit"></i>
-                        </span>
-                    </td>
-                </tr>
-        `)
+    function createUser(user) {
+        userService.createUser(user)
+            .then(function (actualUser) {
+                users.push(actualUser)
+                renderUsers(users)
+            })
     }
     function deleteUser(event) {
         var deleteBtn = jQuery(event.target)
-        var id = deleteBtn.attr("id")
-        users.splice(id, 1)
-        renderUsers(users)
+        var theIndex = deleteBtn.attr("id")
+        var theId = users[theIndex]._id
+
+        userService.deleteUser(theId)
+            .then(function (status) {
+                users.splice(theIndex, 1)
+                renderUsers(users)
+            })
     }
-    function selectUser() { … }
-    function updateUser() { … }
+    function selectUser(event) {
+        var selectBtn = jQuery(event.target)
+        var theId = selectBtn.attr("id")
+        selectedUser = users.find(user => user._id === theId)
+        $usernameFld.val(selectedUser.username)
+        $firstNameFld.val(selectedUser.firstname)
+        $lastNameFld.val(selectedUser.lastname)
+        $roleFld.val(selectedUser.role)
+    }
+    function updateUser() {
+        selectedUser.username = $usernameFld.val()
+        selectedUser.firstname = $firstNameFld.val()
+        selectedUser.lastname = $lastNameFld.val()
+        selectedUser.role = $roleFld.val()
+        userService.updateUser(selectedUser._id, selectedUser)
+            .then(function (status) {
+                var index = users.findIndex(user => user._id === selectedUser._id)
+                users[index] = selectedUser
+                renderUsers(users)
+            })
+
+    }
     function renderUsers(users) {
         $tbody.empty()
         for(var i=0; i<users.length; i++) {
             var user = users[i]
             $tbody.append(`
-                <tr>
-                    <td>${user.username}</td>
-                    <td>${user.firstname}</td>
-                    <td>${user.lastname}</td>
-                    <td>${user.role}</td>
+                <tr class="wbdv-template wbdv-user wbdv-hidden">
+                    <td class="wbdv-username">${user.username}</td>
+                    <td class="wbdv-first-name">${user.firstname}</td>
+                    <td class="wbdv-last-name">${user.lastname}</td>
+                    <td class="wbdv-role">${user.role}</td>
                     <td class="wbdv-actions">
-                        <span class="pull-right">
-                            <i class="fa-2x fa fa-times wbdv-remove"></i>
-                            <i class="fa-2x fa fa-pencil wbdv-edit"></i>
+                        <span class="btn pull-right">
+                            <i class="btn fa-2x fa fa-times wbdv-remove"></i>
+                            <i class="btn fa-2x fa fa-pencil wbdv-edit"></i>
                         </span>
                     </td>
                 </tr>
             `)
         }
+        jQuery(".wbdv-remove").click(deleteUser)
+        jQuery(".wbdv-edit").click(selectUser)
     }
-    function findAllUsers() { … } // optional - might not need this
-    function findUserById() { … } // optional - might not need this
-})();
+    //function findAllUsers() { … } // optional - might not need this
+    //function findUserById() { … } // optional - might not need this
+
+    function init() {
+        $usernameFld = $(".usernameFld")
+        $firstNameFld = $(".firstNameFld")
+        $lastNameFld = $(".lastNameFld")
+        $roleFld = $(".roleFld")
+        $createBtn = jQuery(".wbdv-create")
+        $editBtn = jQuery(".wbdv-edit")
+        $removeBtn = jQuery(".wbdv-remove")
+        $updateBtn = $(".wbdv-update")
+        $tbody = jQuery("tbody")
+
+        $updateBtn.click(updateUser)
+        $createBtn.click(() => {
+                createUser({
+                    username: $usernameFld.val(),
+                    firstname: $firstNameFld.val(),
+                    lastname: $lastNameFld.val(),
+                    role: $roleFld.val()
+                })
+                $usernameFld.val("")
+                $roleFld.val()
+            }
+        )
+
+        userService.findAllUsers()
+            .then(function (actualUsersFromServer) {
+                users = actualUsersFromServer
+                renderUsers(users)
+            })
+    }
+    jQuery(init)
+
+

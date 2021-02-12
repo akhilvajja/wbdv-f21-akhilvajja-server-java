@@ -24,28 +24,28 @@
                 <th>Role</th>
                 <th>&nbsp;</th>
             </tr>
+            <tr class="wbdv-form">
+                <td><input id="usernameFld" class="form-control"
+                           placeholder="Username" /></td>
+                <td><input id="passwordFld" class="form-control"
+                           placeholder="Password" /></td>
+                <td><input id="firstNameFld" class="form-control"
+                           placeholder="First Name" /></td>
+                <td><input id="lastNameFld" class="form-control"
+                           placeholder="Last Name" /></td>
+                <td><select id="roleFld" class="form-control">
+                    <option value="FACULTY">Faculty</option>
+                    <option value="STUDENT">Student</option>
+                    <option value="ADMIN">Admin</option>
+                </select></td>
+                <td><span class="btn pull-right" style="white-space: nowrap">
+                        <i class="btn fa-2x fa fa-search wbdv-search"></i>
+                        <i class="btn fa-2x fa fa-plus wbdv-create"></i>
+                        <i class="btn fa-2x fa fa-check wbdv-update"></i>
+                    </span></td>
+            </tr>
             </thead>
             <tbody class="wbdv-tbody">
-                <tr class="wbdv-form">
-                    <td><input id="usernameFld" class="form-control"
-                               placeholder="Username" /></td>
-                    <td><input id="passwordFld" class="form-control"
-                               placeholder="Password" /></td>
-                    <td><input id="firstNameFld" class="form-control"
-                               placeholder="First Name" /></td>
-                    <td><input id="lastNameFld" class="form-control"
-                               placeholder="Last Name" /></td>
-                    <td><select id="roleFld" class="form-control">
-                        <option value="FACULTY">Faculty</option>
-                        <option value="STUDENT">Student</option>
-                        <option value="ADMIN">Admin</option>
-                    </select></td>
-                    <td><span class="pull-right" style="white-space: nowrap">
-                        <i class="fa-2x fa fa-search wbdv-search"></i>
-                        <i class="fa-2x fa fa-plus wbdv-create"></i>
-                        <i class="fa-2x fa fa-check wbdv-update"></i>
-                    </span></td>
-                </tr>
                 <tr class="wbdv-template wbdv-user wbdv-hidden">
                     <td class="wbdv-username">ada</td>
                     <td>&nbsp;</td>
@@ -53,9 +53,9 @@
                     <td class="wbdv-last-name">Lovelace</td>
                     <td class="wbdv-role">FACULTY</td>
                     <td class="wbdv-actions">
-                        <span class="pull-right">
-                            <i class="fa-2x fa fa-times wbdv-remove"></i>
-                            <i class="fa-2x fa fa-pencil wbdv-edit"></i>
+                        <span class="btn pull-right">
+                            <i class="btn fa-2x fa fa-times wbdv-remove"></i>
+                            <i class="btn fa-2x fa fa-pencil wbdv-edit"></i>
                         </span>
                     </td>
                 </tr>
